@@ -62,11 +62,37 @@ Add to your Claude Desktop configuration:
 
 ## Usage
 
-Once configured, you can ask Claude to search for flights:
+Once configured, you can ask Claude to search for flights using natural language:
 
-- "Find flights from LAX to JFK on December 25th"
-- "Search for business class flights from London to Paris next week"
-- "Show me the cheapest flights from NYC to Tokyo in January"
+### Example Queries:
+- **Basic Search**: "Find flights from LAX to JFK on December 25th"
+- **With Class**: "Search for business class flights from London to Paris next week"
+- **Multiple Passengers**: "Show me flights for 2 passengers from NYC to Tokyo in January"
+- **Round Trip**: "Find round-trip flights from San Francisco to New York, departing December 20th and returning December 27th"
+- **Specific Requirements**: "Search for economy premium flights from Miami to Barcelona with maximum 1 stop"
+
+### Supported Parameters:
+- **Departure/Arrival**: 3-letter IATA airport codes (LAX, JFK, LHR, etc.)
+- **Dates**: Any date format (Claude will convert to YYYY-MM-DD)
+- **Passengers**: 1-9 adult passengers
+- **Cabin Classes**: Economy, Economy Premium, Business, Business Premium, First, First Premium
+- **Trip Types**: One-way and round-trip
+- **Results**: Up to 50 flight options per search
+
+### Sample Response:
+```
+✈️ Found 2 flights for LAX → JFK
+📅 Departure: 2024-12-25
+👥 Passengers: 1 | 🎫 Class: economy
+
+🔸 Flight 1:
+   Mock Airlines MK123 (Boeing 737)
+   🛫 LAX 08:00 → 🛬 JFK 12:00
+   ⏱️ Duration: 4h 0m | 🔄 Stops: 0
+   💰 USD 299.99 | 🎫 economy (Y)
+   🧳 Baggage: 1 pieces (23kg)
+   📋 ❌ Non-refundable | ✅ Exchangeable
+```
 
 ## Development
 
@@ -89,6 +115,47 @@ src/
 └── config/               # Configuration management
     └── index.ts          # Environment variables and settings
 ```
+
+## Troubleshooting
+
+### Common Issues:
+
+1. **Server not connecting to Claude Desktop**
+   - Verify the path in Claude Desktop config is correct
+   - Check that the server builds successfully: `npm run build`
+   - Restart Claude Desktop after configuration changes
+
+2. **"Module not found" errors**
+   - Ensure you've run `npm install` and `npm run build`
+   - Check that the dist folder exists and contains compiled files
+
+3. **API connection issues**
+   - The server automatically falls back to mock data if SMP Air API is unavailable
+   - Check environment variables are set correctly
+   - For testing, use `SMP_MODE=fake` (default)
+
+4. **No flight results**
+   - Verify airport codes are valid 3-letter IATA codes
+   - Check date format is YYYY-MM-DD
+   - Try different routes or dates
+
+### Testing the Server:
+```bash
+# Test the flight search functionality
+node test-flight-search.js
+
+# Test the MCP server directly
+npm run dev
+```
+
+### Logs:
+- MCP server logs appear in Claude Desktop's developer console
+- Additional logs are written to stderr for debugging
+
+## API Modes
+
+- **Fake Mode** (`SMP_MODE=fake`): Returns mock flight data for testing
+- **Real Mode** (`SMP_MODE=real`): Connects to actual SMP Air API (requires valid credentials)
 
 ## License
 
